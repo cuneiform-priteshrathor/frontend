@@ -1,26 +1,14 @@
-
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserDataStart, fetchUserDataSuccess, fetchUserDataFailure } from './redux/userSlice'; // Correct the imports
-
 import { fetchUserData } from './redux/userApi'; // Add the import for the API function
 
 function App() {
-  const userData = useSelector((state) => state.user.userData);
-  const loading = useSelector((state) => state.user.loading);
-  const error = useSelector((state) => state.user.error);
+  const { userData, loading, error } = useSelector((state) => state.user);
+  console.log('userData: ', userData);
   const dispatch = useDispatch();
-  const [counter, setCounter] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchUserDataStart());
-    fetchUserData()
-      .then((data) => {
-        dispatch(fetchUserDataSuccess(data));
-      })
-      .catch((error) => {
-        dispatch(fetchUserDataFailure(error.message));
-      });
+    dispatch(fetchUserData())
   }, [dispatch]);
 
   if (loading) {
@@ -34,14 +22,14 @@ function App() {
   return (
     <div>
       {userData && userData.length > 0 ? (
-        // {userData && userData.length > 0 ? (
         <table>
-          <tr>
-            <th>Sr_no</th>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-
+          <thead>
+            <tr>
+              <th>Sr_no</th>
+              <th>Name</th>
+              <th>Email</th>
+            </tr>
+          </thead>
           <tbody>
             {userData.map((user, index) => (
               <tr key={user._id}>
@@ -51,15 +39,11 @@ function App() {
               </tr>
             ))}
           </tbody>
-
         </table>
       ) : (
-        <tr>
-          <td>No records found</td>
-        </tr>
-      )
-      }
-    </div >
+        <div>No records found</div> // Wrap this in a div or use a <p> tag instead
+      )}
+    </div>
   );
 }
 
